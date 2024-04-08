@@ -1,6 +1,7 @@
-#include "Primitive.h"
 #include "ShaderProgram.h"
 #include "Windows.h"
+
+#include "Cube.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -58,7 +59,7 @@ void main(){
 	if (glewInit() == GLEW_OK) {
 
 		//Declarar intancia de gameobject
-		Primitive* cube = new Primitive(glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), 0.01f, -1.f);
+		Cube* cube = new Cube(glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), 0.01f, -1.f);
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -89,29 +90,11 @@ void main(){
 		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
 		glBindBuffer(GL_ARRAY_BUFFER, vboPuntos);		
 
-		//Posición X e Y del punto
-		GLfloat punto[] = {
-					-0.5f, +0.5f, -0.5f, // 3
-					+0.5f, +0.5f, -0.5f, // 2
-					-0.5f, -0.5f, -0.5f, // 6
-					+0.5f, -0.5f, -0.5f, // 7
-					+0.5f, -0.5f, +0.5f, // 4
-					+0.5f, +0.5f, -0.5f, // 2
-					+0.5f, +0.5f, +0.5f, // 0
-					-0.5f, +0.5f, -0.5f, // 3
-					-0.5f, +0.5f, +0.5f, // 1
-					-0.5f, -0.5f, -0.5f, // 6
-					-0.5f, -0.5f, +0.5f, // 5
-					+0.5f, -0.5f, +0.5f, // 4
-					-0.5f, +0.5f, +0.5f, // 1
-					+0.5f, +0.5f, +0.5f  // 0
-		};
-
 		//Definimos modo de dibujo para cada cara si cambiamos el LINE por FILL 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Ponemos los valores en el VBO creado
-		glBufferData(GL_ARRAY_BUFFER, sizeof(punto), punto, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * cube->GetPoint().size(), cube->GetPointData(), GL_STATIC_DRAW);
 
 		//Indicamos donde almacenar y como esta distribuida la información
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -124,15 +107,6 @@ void main(){
 
 		//Desvinculamos VAO
 		glBindVertexArray(0);
-
-		//Generamos la matriz modelo
-		//glm::mat4 modelMatrix = glm::mat4(1.0f);
-
-		//Genero una matriz de translacion
-		//glm::mat4 translationMatrix = GenerateTranslationMatrix(glm::vec3(-0.2));
-
-		//Aplicar calculo de matrices
-		//modelMatrix = translationMatrix * modelMatrix;
 
 		//Indicar a la tarjeta GPU que programa debe usar
 		glUseProgram(compiledPrograms[0]);
