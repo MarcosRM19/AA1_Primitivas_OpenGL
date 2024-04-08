@@ -1,20 +1,19 @@
 #pragma once
 
-#include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+
+#include "Transform.h"
 
 class Primitive
 {
 private:
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 forward;
+	Transform* transform;
 	float fVelocity;
 	float fAngularVelocity;
 
 public:
-	//constructor
+	//Constructor
 	Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, float fVelocity, float fAngularVelocity);
 
 	//Matrix
@@ -23,14 +22,11 @@ public:
 	glm::mat4 GenerateScaleMatrix(glm::vec3 newScale);
 
 	//Setters
-	void SetPosition(glm::vec3 newPosition);
-	void SetRotation(glm::vec3 newRotation);
-	void SetForward(glm::vec3 newForward);
+	void SetTransform(Transform transform);
 
 	//Getters
-	glm::vec3 GetPosition();
-	glm::vec3 GetRotation();
-	glm::vec3 GetForward();
+	Transform* GetTransform();
+
 	float GetFVelocity();
 	float GetFAngulargVelocity();
 

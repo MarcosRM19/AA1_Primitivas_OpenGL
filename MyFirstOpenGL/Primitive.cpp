@@ -2,9 +2,7 @@
 
 Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, float fVelocity, float fAngularVelocity)
 {
-	this->position = position;
-	this->rotation = rotation;
-	this->forward = forward;
+	transform = new Transform(position, rotation, forward);
 	this->fVelocity = fVelocity;
 	this->fAngularVelocity = fAngularVelocity;
 }
@@ -24,34 +22,10 @@ glm::mat4 GenerateScaleMatrix(glm::vec3 newScale)
 	return glm::scale(glm::mat4(1.f), newScale);
 }
 
-void Primitive::SetPosition(glm::vec3 newPosition)
-{
-	position = newPosition;
-}
 
-void Primitive::SetRotation(glm::vec3 newRotation)
+Transform* Primitive::GetTransform()
 {
-	rotation = newRotation;
-}
-
-void Primitive::SetForward(glm::vec3 newForward)
-{
-	forward = newForward;
-}
-
-glm::vec3 Primitive::GetPosition()
-{
-	return position;
-}
-
-glm::vec3 Primitive::GetRotation()
-{
-	return rotation;
-}
-
-glm::vec3 Primitive::GetForward()
-{
-	return forward;
+	return transform;
 }
 
 float Primitive::GetFVelocity()
