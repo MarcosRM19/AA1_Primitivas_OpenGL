@@ -1,6 +1,6 @@
-
 #include "Primitive.h"
 #include "ShaderProgram.h"
+#include "Windows.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -15,11 +15,8 @@ void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHe
 	glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
 }
 
-void main(){
-
-	//Definir semillas del rand según el tiempo
-	srand(static_cast<unsigned int>(time(NULL)));
-
+GLFWwindow* InitProgram()
+{
 	//Inicializamos GLFW para gestionar ventanas e inputs
 	glfwInit();
 
@@ -45,7 +42,17 @@ void main(){
 	glEnable(GL_CULL_FACE);
 
 	//Indicamos lado del culling
-	glCullFace(GL_BACK);	
+	glCullFace(GL_BACK);
+
+	return window;
+}
+
+void main(){
+
+	//Definir semillas del rand según el tiempo
+	srand(static_cast<unsigned int>(time(NULL)));
+
+	GLFWwindow* window = InitProgram();
 
 	//Inicializamos GLEW y controlamos errores
 	if (glewInit() == GLEW_OK) {
