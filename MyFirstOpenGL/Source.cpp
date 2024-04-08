@@ -1,26 +1,17 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm.hpp>
-#include <gtc/type_ptr.hpp>
-#include <gtc/matrix_transform.hpp>
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
 
+#include "Primitive.h"
+
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
 std::vector<GLuint> compiledPrograms;
-
-struct GameObject
-{
-	glm::vec3 position = glm::vec3(0.f);
-	glm::vec3 rotation = glm::vec3(0.f);
-	glm::vec3 forward = glm::vec3(1.f, 0.f, 0.f);
-	float fVelocity = 0.01f;
-	float fAngularVelocity = -1.f;
-};
 
 struct ShaderProgram {
 
@@ -37,18 +28,6 @@ void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHe
 	glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
 	
 }
-
-//Cuncion que genera una matriz de translacion
-glm::mat4 GenerateTranslationMatrix(glm::vec3 translation)
-{
-	return glm::translate(glm::mat4(1.f), translation);
-}
-
-glm::mat4 GenerateRotationMatrix(glm::vec3 axis, float fDegrees)
-{
-	return glm::rotate(glm::mat4(1.f), glm::radians(fDegrees), glm::normalize(axis));
-}
-
 
 //Funcion que devolvera una string con todo el archivo leido
 std::string Load_File(const std::string& filePath) {
@@ -295,7 +274,7 @@ void main(){
 	if (glewInit() == GLEW_OK) {
 
 		//Declarar intancia de gameobject
-		GameObject cube;
+		Primitive* cube = new Primitive(glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), 0.01f, -1.f);
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -344,7 +323,7 @@ void main(){
 					+0.5f, +0.5f, +0.5f  // 0
 		};
 
-		//Definimos modo de dibujo para cada cara
+		//Definimos modo de dibujo para cada cara si cambiamos el LINE por FILL 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Ponemos los valores en el VBO creado
@@ -393,17 +372,17 @@ void main(){
 			glBindVertexArray(vaoPuntos);
 
 			glm::mat4 cubeModelMatrix = glm::mat4(1.0f);
+			
+			cube->SetPosition(cube->GetPosition() + cube->GetForward() * cube->GetFVelocity());
+			cube->SetRotation(cube->GetRotation() + glm::vec3(0.f, 1.f, 0.f) * cube->GetFAngulargVelocity());
 
-			cube.position = cube.position + cube.forward * cube.fVelocity;
-			cube.rotation = cube.rotation + glm::vec3(0.f, 1.f, 0.f) * cube.fAngularVelocity;
-
-			if (cube.position.x >= 0.5f || cube.position.x <= -0.5f)
+			if (cube->GetPosition().y >= 0.5f || cube->GetPosition().y <= -0.5f)
 			{
-				cube.forward = cube.forward * -1.f;
+				cube->SetForward(cube->GetForward() * -1.f);
 			}
 
-			glm::mat4 cubeTranslaionMatrix = GenerateTranslationMatrix(cube.position);
-			glm::mat4 cubeRotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube.rotation.y);
+			glm::mat4 cubeTranslaionMatrix = cube->GenerateTranslationMatrix(cube->GetPosition());
+			glm::mat4 cubeRotationMatrix = cube->GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube->GetRotation().y);
 
 			cubeModelMatrix = cubeTranslaionMatrix * cubeRotationMatrix * cubeModelMatrix;
 			
