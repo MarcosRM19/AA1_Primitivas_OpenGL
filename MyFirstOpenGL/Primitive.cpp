@@ -1,11 +1,12 @@
 #include "Primitive.h"
 
-Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point)
+Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point, float fScaleVelocity)
 {
 	transform = new Transform(position, rotation, forward, scale);
 	this->fVelocity = fVelocity;
 	this->fAngularVelocity = fAngularVelocity;
 	this->point = point;
+	this->fScaleVelocity = fScaleVelocity;
 }
 
 glm::mat4 Primitive::GenerateTranslationMatrix(glm::vec3 translation)

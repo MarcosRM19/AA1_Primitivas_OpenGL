@@ -12,13 +12,13 @@ private:
 	Transform* transform;
 	float fVelocity;
 	float fAngularVelocity;
-	float fScaleVelocity = 0.99;
+	float fScaleVelocity;
 	std::vector<GLfloat> point;
 	glm::mat4 modelMatrix;
 
 public:
 	//Constructor
-	Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point);
+	Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point, float fScaleVelocity);
 
 	//Matrix
 	glm::mat4 GenerateTranslationMatrix(glm::vec3 translation);
