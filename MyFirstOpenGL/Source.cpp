@@ -2,6 +2,7 @@
 #include "Windows.h"
 
 #include "Cube.h"
+#include "orthoedron.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -59,7 +60,8 @@ void main(){
 	if (glewInit() == GLEW_OK) {
 
 		//Declarar intancia de gameobject
-		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), 0.01f, -1.f);
+		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f);
+		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f);
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -94,7 +96,7 @@ void main(){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Ponemos los valores en el VBO creado
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * cube->GetPoint().size(), cube->GetPointData(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * orthoedron->GetPoint().size(), orthoedron->GetPointData(), GL_STATIC_DRAW);
 
 		//Indicamos donde almacenar y como esta distribuida la información
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -131,20 +133,7 @@ void main(){
 
 			glm::mat4 cubeModelMatrix = glm::mat4(1.0f);
 			
-			cube->GetTransform()->SetPosition(cube->GetTransform()->GetPosition() + cube->GetTransform()->GetForward() * cube->GetFVelocity());
-			cube->GetTransform()->SetRotation(cube->GetTransform()->GetRotation() + glm::vec3(0.f, 1.f, 0.f) * cube->GetFAngulargVelocity());
-
-			if (cube->GetTransform()->GetPosition().y >= 0.5f || cube->GetTransform()->GetPosition().y <= -0.5f)
-			{
-				cube->GetTransform()->SetForward(cube->GetTransform()->GetForward() * -1.f);
-			}
-
-			glm::mat4 cubeTranslaionMatrix = cube->GenerateTranslationMatrix(cube->GetTransform()->GetPosition());
-			glm::mat4 cubeRotationMatrix = cube->GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube->GetTransform()->GetRotation().y);
-
-			cubeModelMatrix = cubeTranslaionMatrix * cubeRotationMatrix * cubeModelMatrix;
-			
-			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(cubeModelMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(orthoedron->ApplyMatrix()));
 
 			//Definimos que queremos dibujar
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);

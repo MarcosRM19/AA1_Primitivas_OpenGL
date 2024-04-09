@@ -1,8 +1,8 @@
 #include "Primitive.h"
 
-Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point)
+Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point)
 {
-	transform = new Transform(position, rotation, forward);
+	transform = new Transform(position, rotation, forward, scale);
 	this->fVelocity = fVelocity;
 	this->fAngularVelocity = fAngularVelocity;
 	this->point = point;
@@ -28,6 +28,11 @@ Transform* Primitive::GetTransform()
 	return transform;
 }
 
+glm::mat4 Primitive::GetModelMatrix()
+{
+	return modelMatrix;
+}
+
 float Primitive::GetFVelocity()
 {
 	return fVelocity;
@@ -36,6 +41,11 @@ float Primitive::GetFVelocity()
 float Primitive::GetFAngulargVelocity()
 {
 	return fAngularVelocity;
+}
+
+float Primitive::GetFScaleVelocity()
+{
+	return fScaleVelocity;
 }
 
 GLfloat* Primitive::GetPointData()
@@ -47,4 +57,9 @@ GLfloat* Primitive::GetPointData()
 std::vector<GLfloat> Primitive::GetPoint()
 {
 	return point;
+}
+
+void Primitive::SetModelMatrix(glm::mat4 matrix)
+{
+	modelMatrix = matrix;
 }
