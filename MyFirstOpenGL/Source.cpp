@@ -7,14 +7,12 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
-std::vector<GLuint> compiledPrograms;
-
 void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
 
 	//Definir nuevo tamaño del viewport
 	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
 
-	glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
+	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
 }
 
 GLFWwindow* InitProgram()
@@ -67,13 +65,13 @@ void main(){
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
 
 		//Compilar shaders
-		ShaderProgram shaderProgram;
-		shaderProgram.SetVertexShader(shaderProgram.LoadVertexShader("MyFirstVertexShader.glsl"));
-		shaderProgram.SetGeometryShader(shaderProgram.LoadGeometryShader("MyFirstGeometryShader.glsl"));
-		shaderProgram.SetFragmentShader(shaderProgram.LoadFragmentShader("MyFirstFragmentShader.glsl"));
+
+		SHADER.SetVertexShader(SHADER.LoadVertexShader("MyFirstVertexShader.glsl"));
+		SHADER.SetGeometryShader(SHADER.LoadGeometryShader("MyFirstGeometryShader.glsl"));
+		SHADER.SetFragmentShader(SHADER.LoadFragmentShader("MyFirstFragmentShader.glsl"));
 
 		//Compilar programa
-		compiledPrograms.push_back(shaderProgram.CreateProgram(shaderProgram));
+		SHADER.AddProgram();
 
 		//Definimos color para limpiar el buffer de color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -111,12 +109,12 @@ void main(){
 		glBindVertexArray(0);
 
 		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(compiledPrograms[0]);
+		glUseProgram(SHADER.compiledPrograms[0]);
 
 		//glm::mat4 rotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), 40.f);
 
 		//Asignar valores iniciales al programa
-		glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+		glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 		//glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 		//Generamos el game loop
@@ -133,7 +131,7 @@ void main(){
 
 			glm::mat4 cubeModelMatrix = glm::mat4(1.0f);
 			
-			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(orthoedron->ApplyMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(SHADER.compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(orthoedron->ApplyMatrix()));
 
 			//Definimos que queremos dibujar
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
@@ -148,7 +146,7 @@ void main(){
 
 		//Desactivar y eliminar programa
 		glUseProgram(0);
-		glDeleteProgram(compiledPrograms[0]);
+		glDeleteProgram(SHADER.compiledPrograms[0]);
 
 	}else {
 		std::cout << "Ha petao." << std::endl;
