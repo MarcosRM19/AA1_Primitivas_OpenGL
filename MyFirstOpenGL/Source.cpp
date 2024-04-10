@@ -63,7 +63,7 @@ void main(){
 		//Declarar intancia de gameobject
 		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
-		Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
+		Pyramid* pyramid = new Pyramid(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -99,7 +99,7 @@ void main(){
 
 		//Ponemos los valores en el VBO creado
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * orthoedron->GetPoint().size(), orthoedron->GetPointData(), GL_STATIC_DRAW);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * pyramid->GetPoint().size(), orthoedron->GetPointData(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * pyramid->GetPoint().size(), pyramid->GetPointData(), GL_STATIC_DRAW);
 
 
 		//Indicamos donde almacenar y como esta distribuida la información
