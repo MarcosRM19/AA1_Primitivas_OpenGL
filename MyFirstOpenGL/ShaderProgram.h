@@ -8,6 +8,8 @@
 #include <fstream>
 #include <vector>
 
+#define SHADER ShaderProgram::Instance()
+
 class ShaderProgram
 {
 private:
@@ -15,7 +17,23 @@ private:
 	GLuint geometryShader = 0;
 	GLuint fragmentShader = 0;
 
+	ShaderProgram()
+	{
+
+	}
+
+	ShaderProgram(const ShaderProgram&) = delete;
+	ShaderProgram& operator =(const ShaderProgram&) = delete;
+
 public:
+	inline static ShaderProgram& Instance()
+	{
+		static ShaderProgram shader;
+		return shader;
+	}
+
+	std::vector<GLuint> compiledPrograms;
+
 	std::string Load_File(const std::string& filePath);
 
 	GLuint LoadFragmentShader(const std::string& filePath);
@@ -24,15 +42,15 @@ public:
 
 	GLuint CreateProgram(const ShaderProgram& shaders);
 
+	void AddProgram()
+	{
+		compiledPrograms.push_back(SHADER.CreateProgram(SHADER));
+	}
+
 	// SETTER
 	void SetVertexShader(GLuint vertexShader);
 	void SetGeometryShader(GLuint geometryShader);
 	void SetFragmentShader(GLuint fragmentShader);
-
-	// GETTERS
-	GLuint GetVertexShader();
-	GLuint GetGeometryShader();
-	GLuint GetFragmentShader();
 
 };
 
