@@ -26,7 +26,7 @@ public:
                 +0.2f, +0.2f, +0.2f
 			}, fScaleVelocity) {
 	}
-
+    void Update() override;
     glm::mat4 ApplyMatrix() override;
 };
 

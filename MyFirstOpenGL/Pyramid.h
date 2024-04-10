@@ -10,30 +10,28 @@ public:
         glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, float fScaleVelocity)
         : Primitive(position, rotation, forward, scale, fVelocity, fAngularVelocity,
             {
-                -0.5f, -0.5f, -0.5f,
-                +0.5f, -0.5f, -0.5f,
+                -0.2f, -0.5f, +0.2f,
+                +0.2f, -0.5f, +0.2f,
                 +0.0f, +0.5f, +0.0f,
 
-                -0.5f, -0.5f, +0.5f,
-                +0.5f, -0.5f, +0.5f,
+                -0.2f, -0.5f, -0.2f,
+                -0.2f, -0.5f, +0.2f,
                 +0.0f, +0.5f, +0.0f,
 
-                -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, +0.5f,
+                +0.2f, -0.5f, -0.2f,
+                -0.2f, -0.5f, -0.2f,
                 +0.0f, +0.5f, +0.0f,
 
-                +0.5f, -0.5f, -0.5f,
-                +0.5f, -0.5f, +0.5f,
+                +0.2f, -0.5f, +0.2f,
+                +0.2f, -0.5f, -0.2f,
                 +0.0f, +0.5f, +0.0f,
 
-                -0.5f, -0.5f, +0.5f,
-                -0.5f, -0.5f, -0.5f,
-                +0.0f, +0.5f, +0.0f,
-
-
+                +0.2f, -0.5f, -0.2f,
+                -0.2f, -0.5f, +0.2f,
+                +0.2f, -0.5f, +0.2f,
             }, fScaleVelocity) {
     }
-
+    void Update() override;
     glm::mat4 ApplyMatrix() override;
 };
 

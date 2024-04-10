@@ -1,9 +1,7 @@
 #include "Pyramid.h"
 
-glm::mat4 Pyramid::ApplyMatrix()
+void Pyramid::Update()
 {
-	SetModelMatrix(glm::mat4(1.0f));
-
 	GetTransform()->position = GetTransform()->position + GetTransform()->forward * GetFVelocity();
 	GetTransform()->rotation = GetTransform()->rotation + glm::vec3(1.f, 1.f, 0.f) * GetFAngulargVelocity();
 
@@ -11,6 +9,11 @@ glm::mat4 Pyramid::ApplyMatrix()
 	{
 		GetTransform()->forward = GetTransform()->forward * -1.f;
 	}
+}
+
+glm::mat4 Pyramid::ApplyMatrix()
+{
+	SetModelMatrix(glm::mat4(1.0f));
 
 	glm::mat4 pyramidTranslaionMatrix = GenerateTranslationMatrix(GetTransform()->position);
 	glm::mat4 pyramidRotationMatrixY = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y);
