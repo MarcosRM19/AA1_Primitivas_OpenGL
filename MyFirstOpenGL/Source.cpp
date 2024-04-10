@@ -63,7 +63,7 @@ void main(){
 		//Declarar intancia de gameobject
 		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
-		Pyramid* pyramid = new Pyramid(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
+		Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -95,12 +95,10 @@ void main(){
 		glBindBuffer(GL_ARRAY_BUFFER, vboPuntos);		
 
 		//Definimos modo de dibujo para cada cara si cambiamos el LINE por FILL 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//Ponemos los valores en el VBO creado
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * orthoedron->GetPoint().size(), orthoedron->GetPointData(), GL_STATIC_DRAW);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * pyramid->GetPoint().size(), pyramid->GetPointData(), GL_STATIC_DRAW);
-
 
 		//Indicamos donde almacenar y como esta distribuida la información
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -120,9 +118,13 @@ void main(){
 		//Asignar valores iniciales al programa
 		glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 		//glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		
+		glShadeModel(GL_FLAT);
 
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(window)) {
+
+			double currentTime = glfwGetTime();
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
@@ -135,11 +137,14 @@ void main(){
 			
 			//glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(orthoedron->ApplyMatrix()));
 			pyramid->Update();
+
+			glUniform1f(glGetUniformLocation(compiledPrograms[0], "u_Time"), currentTime);
 			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(pyramid->ApplyMatrix()));
 
 			//Definimos que queremos dibujar
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
-			
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+			glDrawArrays(GL_TRIANGLE_STRIP, 6, 10);
+
 			//Dejamos de usar el VAO indicado anteriormente
 			glBindVertexArray(0);
 

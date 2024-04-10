@@ -19,7 +19,7 @@ glm::mat4 Pyramid::ApplyMatrix()
 	glm::mat4 pyramidRotationMatrixY = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y);
 	glm::mat4 pyramidRotationMatrixX = GenerateRotationMatrix(glm::vec3(1.f, 0.f, 0.f), GetTransform()->rotation.x);
 
-	SetModelMatrix(pyramidTranslaionMatrix * pyramidRotationMatrixX * pyramidRotationMatrixY * GetModelMatrix());
+	SetModelMatrix(pyramidTranslaionMatrix * pyramidRotationMatrixX * pyramidRotationMatrixY *  GetModelMatrix());
 
 	return GetModelMatrix();
 }
