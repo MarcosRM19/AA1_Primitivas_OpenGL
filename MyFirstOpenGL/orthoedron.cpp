@@ -1,4 +1,4 @@
-#include "orthoedron.h"
+#include "Orthoedron.h"
 
 glm::mat4 Orthoedron::ApplyMatrix()
 {
