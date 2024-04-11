@@ -1,8 +1,8 @@
 #include "Orthoedron.h"
 
-void Orthoedron::Update()
+void Orthoedron::Update(int programIndex)
 {
-	Primitive::Update();
+	Primitive::Update(programIndex);
 
 	glm::vec3 scale = GetTransform()->scale;
 
@@ -22,8 +22,6 @@ void Orthoedron::Update()
 	
 	ApplyMatrix();
 
-	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 1);
-
 	//Definimos que queremos dibujar
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
 
@@ -39,5 +37,11 @@ void Orthoedron::ApplyMatrix()
 
 	SetScaleMatrix(GenerateScaleMatrix(GetTransform()->scale));
 	SetRotationMatrix(GenerateRotationMatrix(glm::vec3(0.f, 0.f, 1.f), GetTransform()->rotation.z));
+
+}
+
+void Orthoedron::InitVao()
+{
+	Primitive::InitVao();
 
 }

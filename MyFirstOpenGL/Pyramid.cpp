@@ -1,8 +1,8 @@
 #include "Pyramid.h"
 
-void Pyramid::Update()
+void Pyramid::Update(int programIndex)
 {
-	Primitive::Update();
+	Primitive::Update(programIndex);
 
 	currentTime = glfwGetTime();
 
@@ -16,8 +16,7 @@ void Pyramid::Update()
 
 	ApplyMatrix();
 
-	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 0);
-	glUniform1f(glGetUniformLocation(SHADER.compiledPrograms[0], "u_Time"), currentTime);
+	glUniform1f(glGetUniformLocation(SHADER.compiledPrograms[programIndex], "u_Time"), currentTime);
 
 	//Definimos que queremos dibujar
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -36,5 +35,11 @@ void Pyramid::ApplyMatrix()
 	SetTransitionMatrix(GenerateTranslationMatrix(GetTransform()->position));
 	SetRotationMatrix(GenerateRotationMatrix(glm::vec3(1.f, 0.f, 0.f), GetTransform()->rotation.x) 
 		* GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y));
+
+}
+
+void Pyramid::InitVao()
+{
+	Primitive::InitVao();
 
 }

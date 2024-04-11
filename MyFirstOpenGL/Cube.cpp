@@ -1,8 +1,8 @@
 #include "Cube.h"
 
-void Cube::Update()
+void Cube::Update(int programIndex)
 {
-	Primitive::Update();
+	Primitive::Update(programIndex);
 
 	GetTransform()->position = GetTransform()->position + GetTransform()->forward * GetFVelocity();
 	GetTransform()->rotation = GetTransform()->rotation + glm::vec3(0.f, 1.f, 0.f) * GetFAngulargVelocity();
@@ -13,8 +13,6 @@ void Cube::Update()
 	}
 
 	ApplyMatrix();
-
-	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 1);
 
 	//Definimos que queremos dibujar
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
@@ -31,4 +29,9 @@ void Cube::ApplyMatrix()
 
 	SetTransitionMatrix(GenerateTranslationMatrix(GetTransform()->position));
 	SetRotationMatrix(GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y));
+}
+
+void Cube::InitVao()
+{
+	Primitive::InitVao();
 }

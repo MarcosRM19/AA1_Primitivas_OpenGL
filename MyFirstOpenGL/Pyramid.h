@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Primitive.h"
 
 class Pyramid : public Primitive
@@ -28,7 +27,8 @@ public:
                 -0.2f, -0.2f, -0.2f
             }, fScaleVelocity) {
     }
-    void Update() override;
+    void Update(int programIndex) override;
     void ApplyMatrix() override;
+    void InitVao() override;
 };
 

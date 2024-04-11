@@ -56,8 +56,6 @@ void Primitive::InitVao()
 	//Desvinculamos VAO
 	glBindVertexArray(0);
 
-	//Indicar a la tarjeta GPU que programa debe usar
-	glUseProgram(SHADER.compiledPrograms[0]);
 }
 
 Transform* Primitive::GetTransform()

@@ -31,6 +31,7 @@ public:
         isIncreasing = false;
         
     }
-    void Update() override;
+    void Update(int programIndex) override;
     void ApplyMatrix() override;
+    void InitVao() override;
 };
