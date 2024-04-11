@@ -25,6 +25,11 @@ public:
 	glm::mat4 GenerateRotationMatrix(glm::vec3 axis, float fDegrees);
 	glm::mat4 GenerateScaleMatrix(glm::vec3 newScale);
 
+	virtual void Update()
+	{
+
+	}
+
 	virtual glm::mat4 ApplyMatrix()
 	{
 		return modelMatrix;

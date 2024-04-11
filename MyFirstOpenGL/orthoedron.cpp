@@ -1,13 +1,11 @@
-#include "orthoedron.h"
+#include "Orthoedron.h"
 
-glm::mat4 Orthoedron::ApplyMatrix()
+void Orthoedron::Update()
 {
-	SetModelMatrix(glm::mat4(1.0f));
-
 	glm::vec3 scale = GetTransform()->scale;
 
 	if (isIncreasing)
-		scale.y = scale.y / (1- GetFScaleVelocity());
+		scale.y = scale.y / (1 - GetFScaleVelocity());
 	else
 		scale.y = scale.y * (1 - GetFScaleVelocity());
 
@@ -19,6 +17,11 @@ glm::mat4 Orthoedron::ApplyMatrix()
 	{
 		isIncreasing = !isIncreasing;
 	}
+}
+
+glm::mat4 Orthoedron::ApplyMatrix()
+{
+	SetModelMatrix(glm::mat4(1.0f));
 
 	glm::mat4 cubeScaleMatrix = GenerateScaleMatrix(GetTransform()->scale);
 	glm::mat4 cubeRotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 0.f, 1.f), GetTransform()->rotation.z);

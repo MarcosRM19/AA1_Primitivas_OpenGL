@@ -31,6 +31,6 @@ public:
         isIncreasing = false;
         
     }
-
+    void Update() override;
     glm::mat4 ApplyMatrix() override;
 };
