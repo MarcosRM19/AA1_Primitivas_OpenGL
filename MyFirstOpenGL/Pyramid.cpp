@@ -2,6 +2,10 @@
 
 void Pyramid::Update()
 {
+	Primitive::Update();
+
+	currentTime = glfwGetTime();
+
 	GetTransform()->position = GetTransform()->position + GetTransform()->forward * GetFVelocity();
 	GetTransform()->rotation = GetTransform()->rotation + glm::vec3(1.f, 1.f, 0.f) * GetFAngulargVelocity();
 
@@ -9,6 +13,16 @@ void Pyramid::Update()
 	{
 		GetTransform()->forward = GetTransform()->forward * -1.f;
 	}
+
+	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 0);
+	glUniform1f(glGetUniformLocation(SHADER.compiledPrograms[0], "u_Time"), currentTime);
+
+	//Definimos que queremos dibujar
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+	glDrawArrays(GL_TRIANGLE_STRIP, 6, 4);
+
+	//Dejamos de usar el VAO indicado anteriormente
+	glBindVertexArray(0);
 }
 
 glm::mat4 Pyramid::ApplyMatrix()

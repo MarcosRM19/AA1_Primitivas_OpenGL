@@ -2,6 +2,8 @@
 
 void Orthoedron::Update()
 {
+	Primitive::Update();
+
 	glm::vec3 scale = GetTransform()->scale;
 
 	if (isIncreasing)
@@ -17,6 +19,14 @@ void Orthoedron::Update()
 	{
 		isIncreasing = !isIncreasing;
 	}
+
+	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 1);
+
+	//Definimos que queremos dibujar
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
+
+	//Dejamos de usar el VAO indicado anteriormente
+	glBindVertexArray(0);
 }
 
 glm::mat4 Orthoedron::ApplyMatrix()
