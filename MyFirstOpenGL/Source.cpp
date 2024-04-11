@@ -9,11 +9,8 @@
 #define WINDOW_HEIGHT 480
 
 void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
-
-	//Definir nuevo tama�o del viewport
+	//Definir nuevo tamano del viewport
 	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
-
-	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
 }
 
 GLFWwindow* InitProgram()
@@ -61,6 +58,12 @@ void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 	//Compilar programa
 	SHADER.AddProgram();
 
+	SHADER.SetVertexShader(SHADER.LoadVertexShader("MyFirstVertexShader.glsl"));
+	SHADER.SetGeometryShader(SHADER.LoadGeometryShader("MyFirstGeometryShader.glsl"));
+	SHADER.SetFragmentShader(SHADER.LoadFragmentShader("PyramidFragmentShader.glsl"));
+
+	SHADER.AddProgram();
+
 	//Definimos color para limpiar el buffer de color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 
@@ -70,13 +73,14 @@ void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 
 	//Asignar valores iniciales al programa
 	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[1], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	glShadeModel(GL_FLAT);
 }
 
 void main(){
 
-	//Definir semillas del rand seg�n el tiempo
+	//Definir semillas del rand segun el tiempo
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	GLFWwindow* window = InitProgram();
@@ -98,9 +102,10 @@ void main(){
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			
-			cube->Update();
-			orthoedron->Update();
-			pyramid->Update();
+			cube->Update(0);
+			orthoedron->Update(0);
+			pyramid->Update(1);
+
 
 			//Cambiamos buffers
 			glFlush();
@@ -110,6 +115,7 @@ void main(){
 		//Desactivar y eliminar programa
 		glUseProgram(0);
 		glDeleteProgram(SHADER.compiledPrograms[0]);
+		glDeleteProgram(SHADER.compiledPrograms[1]);
 
 	}else {
 		std::cout << "Ha petao." << std::endl;
