@@ -19,6 +19,8 @@ void Orthoedron::Update()
 	{
 		isIncreasing = !isIncreasing;
 	}
+	
+	ApplyMatrix();
 
 	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 1);
 
@@ -29,14 +31,13 @@ void Orthoedron::Update()
 	glBindVertexArray(0);
 }
 
-glm::mat4 Orthoedron::ApplyMatrix()
+void Orthoedron::ApplyMatrix()
 {
-	SetModelMatrix(glm::mat4(1.0f));
+	SetTransitionMatrix(glm::mat4(1.0f));
+	SetRotationMatrix(glm::mat4(1.0f));
+	SetScaleMatrix(glm::mat4(1.0f));
 
-	glm::mat4 cubeScaleMatrix = GenerateScaleMatrix(GetTransform()->scale);
-	glm::mat4 cubeRotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 0.f, 1.f), GetTransform()->rotation.z);
+	SetScaleMatrix(GenerateScaleMatrix(GetTransform()->scale));
+	SetRotationMatrix(GenerateRotationMatrix(glm::vec3(0.f, 0.f, 1.f), GetTransform()->rotation.z));
 
-	SetModelMatrix(cubeRotationMatrix * cubeScaleMatrix * GetModelMatrix());
-
-	return GetModelMatrix();
 }

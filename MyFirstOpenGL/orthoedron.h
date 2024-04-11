@@ -32,5 +32,5 @@ public:
         
     }
     void Update() override;
-    glm::mat4 ApplyMatrix() override;
+    void ApplyMatrix() override;
 };

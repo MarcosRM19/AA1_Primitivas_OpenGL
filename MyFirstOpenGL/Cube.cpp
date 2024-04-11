@@ -12,6 +12,8 @@ void Cube::Update()
 		GetTransform()->forward = GetTransform()->forward * -1.f;
 	}
 
+	ApplyMatrix();
+
 	glUniform1i(glGetUniformLocation(SHADER.compiledPrograms[0], "isNotPyramid"), 1);
 
 	//Definimos que queremos dibujar
@@ -21,14 +23,12 @@ void Cube::Update()
 	glBindVertexArray(0);
 }
 
-glm::mat4 Cube::ApplyMatrix()
+void Cube::ApplyMatrix()
 {
-	SetModelMatrix(glm::mat4(1.0f));
+	SetTransitionMatrix(glm::mat4(1.0f));
+	SetRotationMatrix(glm::mat4(1.0f));
+	SetScaleMatrix(glm::mat4(1.0f));
 
-	glm::mat4 cubeTranslaionMatrix = GenerateTranslationMatrix(GetTransform()->position);
-	glm::mat4 cubeRotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y);
-
-	SetModelMatrix(cubeTranslaionMatrix * cubeRotationMatrix * GetModelMatrix());
-
-	return GetModelMatrix();
+	SetTransitionMatrix(GenerateTranslationMatrix(GetTransform()->position));
+	SetRotationMatrix(GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), GetTransform()->rotation.y));
 }
