@@ -5,23 +5,26 @@ void Pyramid::Update(int programIndex)
 	Primitive::Update(programIndex);
 
 	currentTime = glfwGetTime();
-
-	GetTransform()->position = GetTransform()->position + GetTransform()->forward * GetFVelocity();
-	GetTransform()->rotation = GetTransform()->rotation + glm::vec3(1.f, 1.f, 0.f) * GetFAngulargVelocity();
-
-	if (GetTransform()->position.y >= 0.5f || GetTransform()->position.y <= -0.5f)
+	if (!pauseObject)
 	{
-		GetTransform()->forward = GetTransform()->forward * -1.f;
-	}
+		GetTransform()->position = GetTransform()->position + GetTransform()->forward * GetFVelocity();
+		GetTransform()->rotation = GetTransform()->rotation + glm::vec3(1.f, 1.f, 0.f) * GetFAngulargVelocity();
 
+		if (GetTransform()->position.y >= 0.5f || GetTransform()->position.y <= -0.5f)
+		{
+			GetTransform()->forward = GetTransform()->forward * -1.f;
+		}
+	}
 	ApplyMatrix();
 
-	glUniform1f(glGetUniformLocation(SHADER.compiledPrograms[programIndex], "u_Time"), currentTime);
+	if (!pauseObject) glUniform1f(glGetUniformLocation(SHADER.compiledPrograms[programIndex], "u_Time"), currentTime);
 
-	//Definimos que queremos dibujar
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-	glDrawArrays(GL_TRIANGLE_STRIP, 6, 4);
-
+	if (renderObject)
+	{
+		//Definimos que queremos dibujar
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glDrawArrays(GL_TRIANGLE_STRIP, 6, 4);
+	}
 	//Dejamos de usar el VAO indicado anteriormente
 	glBindVertexArray(0);
 }

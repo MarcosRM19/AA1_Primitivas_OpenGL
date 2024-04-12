@@ -88,10 +88,8 @@ GLuint ShaderProgram::LoadGeometryShader(const std::string& filePath)
 	if (success) {
 
 		return geometryShader;
-
 	}
 	else {
-
 		//Obtenemos longitud del log
 		GLint logLength;
 		glGetShaderiv(geometryShader, GL_INFO_LOG_LENGTH, &logLength);

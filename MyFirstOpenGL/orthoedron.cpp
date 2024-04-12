@@ -11,20 +11,24 @@ void Orthoedron::Update(int programIndex)
 	else
 		scale.y = scale.y * (1 - GetFScaleVelocity());
 
-
-	GetTransform()->scale = scale;
-	GetTransform()->rotation = GetTransform()->rotation + glm::vec3(0.f, 0.f, 1.f) * GetFAngulargVelocity();
-
-	if (GetTransform()->scale.y >= 1.f || GetTransform()->scale.y <= 0.5f)
+	if (!pauseObject)
 	{
-		isIncreasing = !isIncreasing;
+		GetTransform()->scale = scale;
+		GetTransform()->rotation = GetTransform()->rotation + glm::vec3(0.f, 0.f, 1.f) * GetFAngulargVelocity();
+
+		if (GetTransform()->scale.y >= 1.f || GetTransform()->scale.y <= 0.5f)
+		{
+			isIncreasing = !isIncreasing;
+		}
 	}
 	
 	ApplyMatrix();
-
-	//Definimos que queremos dibujar
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
-
+	
+	if (renderObject)
+	{
+		//Definimos que queremos dibujar
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
+	}
 	//Dejamos de usar el VAO indicado anteriormente
 	glBindVertexArray(0);
 }

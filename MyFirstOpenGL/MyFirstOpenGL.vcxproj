@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="ObjectHandler.cpp" />
     <ClCompile Include="Orthoedron.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Pyramid.cpp" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="ObjectHandler.h" />
     <ClInclude Include="Orthoedron.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Pyramid.h" />
