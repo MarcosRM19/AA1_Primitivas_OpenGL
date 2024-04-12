@@ -20,11 +20,15 @@ private:
 	float fScaleVelocity;
 	std::vector<GLfloat> point;
 
-
 	GLuint vaoPuntos, vboPuntos;
 
 public:
 	glm::mat4 transitionMatrix, rotationMatrix, scaleMatrix;
+
+	bool renderObject;
+	bool pauseObject;
+	bool fillObject;
+
 	//Constructor
 	Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, glm::vec3 scale, float fVelocity, float fAngularVelocity, std::vector<GLfloat> point, float fScaleVelocity);
 
@@ -43,15 +47,18 @@ public:
 		glBindVertexArray(vaoPuntos);
 	}
 
-	virtual void ApplyMatrix()
+	virtual void ApplyMatrix() 
 	{
 	}
-
 	virtual void InitVao();
 
 	virtual void IncrementTransforms();
 	virtual void DecraseTransforms();
 
+	virtual void ChangeBetweenLineAndFill();
+
+	bool DisableActiveObject();
+	bool PauseResumeObject();
 
 	//Getters
 	Transform* GetTransform();

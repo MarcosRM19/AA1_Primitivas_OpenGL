@@ -7,6 +7,10 @@ Primitive::Primitive(glm::vec3 position, glm::vec3 rotation, glm::vec3 forward, 
 	this->fAngularVelocity = fAngularVelocity;
 	this->point = point;
 	this->fScaleVelocity = fScaleVelocity;
+
+	renderObject = true;
+	pauseObject = false;
+	fillObject = false;
 }
 
 glm::mat4 Primitive::GenerateTranslationMatrix(glm::vec3 translation)
@@ -70,6 +74,29 @@ void Primitive::DecraseTransforms()
 	fVelocity -= .1f;
 	fAngularVelocity -= .1f;
 	fScaleVelocity -= .1f;
+}
+
+void Primitive::ChangeBetweenLineAndFill()
+{
+	fillObject = !fillObject;
+	if (fillObject)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+}
+
+bool Primitive::DisableActiveObject()
+{
+	return renderObject = !renderObject;
+}
+
+bool Primitive::PauseResumeObject()
+{
+	return pauseObject = !pauseObject;
 }
 
 Transform* Primitive::GetTransform()

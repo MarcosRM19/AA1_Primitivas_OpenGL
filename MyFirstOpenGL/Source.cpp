@@ -50,31 +50,44 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 {
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		// Pause the animations
+		// Pause all objects
+		for (Primitive* primitve : OBJECTS.primitives)
+		{
+			primitve->PauseResumeObject();
+		}
 	}
 	else if (key == GLFW_KEY_M && action == GLFW_PRESS)
 	{
+		// Increment Velocities
 		OBJECTS.IncrementTransforms();
 	}
 	else if (key == GLFW_KEY_N && action == GLFW_PRESS)
 	{
+		// Decrase Velocities
 		OBJECTS.DecraseTransforms();
 	}
 	else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 	{
 		// Change between fill and line
+		for (Primitive* primitve : OBJECTS.primitives)
+		{
+			primitve->ChangeBetweenLineAndFill();
+		}
 	}
 	else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 	{
 		// Stop rendering cube
+		OBJECTS.primitives[0]->DisableActiveObject();
 	}
 	else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
 	{
 		// Stop rendering ortoedron
+		OBJECTS.primitives[1]->DisableActiveObject();
 	}
 	else if (key == GLFW_KEY_4 && action == GLFW_PRESS)
 	{
 		// Stop rendering pyramid
+		OBJECTS.primitives[2]->DisableActiveObject();
 	}
 }
 
@@ -133,7 +146,6 @@ void main(){
 
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(window)) {
-
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
 
@@ -145,7 +157,6 @@ void main(){
 			cube->Update(0);
 			orthoedron->Update(0);
 			pyramid->Update(1);
-
 
 			//Cambiamos buffers
 			glFlush();
