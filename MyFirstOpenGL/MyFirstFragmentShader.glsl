@@ -7,7 +7,7 @@ out vec4 fragColor;
 void main() {
 
    if(gl_FragCoord.y > (windowSize.y * 0.5))
-	    {
+	   {
 		    fragColor = vec4(1.0, 0.8, 0.0, 1.0);
 	    }
 	    else

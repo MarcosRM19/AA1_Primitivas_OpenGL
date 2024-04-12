@@ -7,183 +7,102 @@ std::string ShaderProgram::Load_File(const std::string& filePath)
 	std::string fileContent;
 	std::string line;
 
-	//Lanzamos error si el archivo no se ha podido abrir
+	//Throw an error if the file could not be opened
 	if (!file.is_open()) {
 		std::cerr << "No se ha podido abrir el archivo: " << filePath << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 
-	//Leemos el contenido y lo volcamos a la variable auxiliar
+	//Read the content and dump it into the auxiliary variable
 	while (std::getline(file, line)) {
 		fileContent += line + "\n";
 	}
 
-	//Cerramos stream de datos y devolvemos contenido
+	//Close data stream and return content
 	file.close();
 
 	return fileContent;
 }
 
-GLuint ShaderProgram::LoadFragmentShader(const std::string& filePath)
+GLuint ShaderProgram::LoadShader(const std::string& filePath, GLuint shader)
 {
-	// Crear un fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//Create a fragment shader
+	GLuint _shader = glCreateShader(shader);
 
-	//Usamos la funcion creada para leer el fragment shader y almacenarlo 
+	//Use the function created to read the fragment shader and store it
 	std::string sShaderCode = Load_File(filePath);
 	const char* cShaderSource = sShaderCode.c_str();
 
-	//Vinculamos el fragment shader con su código fuente
-	glShaderSource(fragmentShader, 1, &cShaderSource, nullptr);
+	//Link the fragment shader with its source code
+	glShaderSource(_shader, 1, &cShaderSource, nullptr);
 
-	// Compilar el fragment shader
-	glCompileShader(fragmentShader);
+	//Compile the fragment shader
+	glCompileShader(_shader);
 
-	// Verificar errores de compilación
+	//Check compilation errors
 	GLint success;
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(_shader, GL_COMPILE_STATUS, &success);
 
-	//Si la compilacion ha sido exitosa devolvemos el fragment shader
+	//If the compilation has been successful we return the fragment shader
 	if (success) {
-
-		return fragmentShader;
-
+		return _shader;
 	}
 	else {
-
-		//Obtenemos longitud del log
+		//Obtain length of the log
 		GLint logLength;
-		glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
+		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &logLength);
 
-		//Obtenemos el log
+		//Obtenemos the log
 		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(fragmentShader, logLength, nullptr, errorLog.data());
+		glGetShaderInfoLog(_shader, logLength, nullptr, errorLog.data());
 
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el fragment shader:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
-GLuint ShaderProgram::LoadGeometryShader(const std::string& filePath)
-{
-	// Crear un vertex shader
-	GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-
-	//Usamos la funcion creada para leer el vertex shader y almacenarlo 
-	std::string sShaderCode = Load_File(filePath);
-	const char* cShaderSource = sShaderCode.c_str();
-
-	//Vinculamos el vertex shader con su código fuente
-	glShaderSource(geometryShader, 1, &cShaderSource, nullptr);
-
-	// Compilar el vertex shader
-	glCompileShader(geometryShader);
-
-	// Verificar errores de compilación
-	GLint success;
-	glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
-
-	//Si la compilacion ha sido exitosa devolvemos el vertex shader
-	if (success) {
-
-		return geometryShader;
-	}
-	else {
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetShaderiv(geometryShader, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Obtenemos el log
-		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(geometryShader, logLength, nullptr, errorLog.data());
-
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el vertex shader:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
-GLuint ShaderProgram::LoadVertexShader(const std::string& filePath)
-{
-	// Crear un vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	//Usamos la funcion creada para leer el vertex shader y almacenarlo 
-	std::string sShaderCode = Load_File(filePath);
-	const char* cShaderSource = sShaderCode.c_str();
-
-	//Vinculamos el vertex shader con su código fuente
-	glShaderSource(vertexShader, 1, &cShaderSource, nullptr);
-
-	// Compilar el vertex shader
-	glCompileShader(vertexShader);
-
-	// Verificar errores de compilación
-	GLint success;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	//Si la compilacion ha sido exitosa devolvemos el vertex shader
-	if (success) {
-
-		return vertexShader;
-
-	}
-	else {
-
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Obtenemos el log
-		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(vertexShader, logLength, nullptr, errorLog.data());
-
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el vertex shader:  " << errorLog.data() << std::endl;
+		//Show the log and end the program
+		std::cerr << "An error occurred while loading the fragment shader:  " << errorLog.data() << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 }
 
 GLuint ShaderProgram::CreateProgram(const ShaderProgram& shaders)
 {
-	//Crear programa de la GPU
+	//Create GPU program
 	GLuint program = glCreateProgram();
 
-	//Verificar que existe un vertex shader y adjuntarlo al programa
+	//Verify that a vertex shader exists and attach it to the program
 	if (shaders.vertexShader != 0) {
 		glAttachShader(program, shaders.vertexShader);
 	}
 
+	//Verify that a geometry shader existsand attach it to the program
 	if (shaders.geometryShader != 0) {
 		glAttachShader(program, shaders.geometryShader);
 	}
 
+	//Verify that a fragment shader existsand attach it to the program
 	if (shaders.fragmentShader != 0) {
 		glAttachShader(program, shaders.fragmentShader);
 	}
 
-	// Linkear el programa
+	//Link the program
 	glLinkProgram(program);
 
-	//Obtener estado del programa
+	//Get program status
 	GLint success;
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 
-	//Devolver programa si todo es correcto o mostrar log en caso de error
+	//Return program if everything is correct or show log in case of error
 	if (success) {
 
-		//Liberamos recursos
+		//Release resources
 		if (shaders.vertexShader != 0) {
 			glDetachShader(program, shaders.vertexShader);
 		}
 
-		//Liberamos recursos
+		//Release resources
 		if (shaders.geometryShader != 0) {
 			glDetachShader(program, shaders.geometryShader);
 		}
 
-		//Liberamos recursos
+		//Release resources
 		if (shaders.fragmentShader != 0) {
 			glDetachShader(program, shaders.fragmentShader);
 		}
@@ -192,15 +111,15 @@ GLuint ShaderProgram::CreateProgram(const ShaderProgram& shaders)
 	}
 	else {
 
-		//Obtenemos longitud del log
+		//Obtain length of the log
 		GLint logLength;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
 
-		//Almacenamos log
+		//Store log
 		std::vector<GLchar> errorLog(logLength);
 		glGetProgramInfoLog(program, logLength, nullptr, errorLog.data());
 
-		std::cerr << "Error al linkar el programa:  " << errorLog.data() << std::endl;
+		std::cerr << "Error linking the program:" << errorLog.data() << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 }

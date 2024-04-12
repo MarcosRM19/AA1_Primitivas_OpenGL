@@ -1,123 +1,97 @@
 #include "ShaderProgram.h"
+#include "InputManager.h"
 #include "Windows.h"
 
 #include "Cube.h"
 #include "Orthoedron.h"
 #include "Pyramid.h"
-#include "ObjectHandler.h"
-
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
 
 void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
-	//Definir nuevo tamano del viewport
+	
+	//Define new viewport size
 	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
 }
 
 GLFWwindow* InitProgram()
 {
-	//Inicializamos GLFW para gestionar ventanas e inputs
+	//Initialize GLFW to manage windowsand inputs
 	glfwInit();
 
-	//Configuramos la ventana
+	//Windows configuration
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-	//Inicializamos la ventana
+	//Initialize the window
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Engine", NULL, NULL);
 
-	//Asignamos funci�n de callback para cuando el frame buffer es modificado
+	//Assign a callback function for when the frame buffer is modified
 	glfwSetFramebufferSizeCallback(window, Resize_Window);
 
-	//Definimos espacio de trabajo
+	//Define workspace
 	glfwMakeContextCurrent(window);
 
-	//Permitimos a GLEW usar funcionalidades experimentales
+	//Allow GLEW to use experimental features
 	glewExperimental = GL_TRUE;
 
-	//Activamos cull face
+	//Activate cull face
 	glEnable(GL_CULL_FACE);
 
-	//Indicamos lado del culling
+	//Indicate culling side
 	glCullFace(GL_BACK);
 
+	//We return window because we need it to future command
 	return window;
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	//Set if the execution is paused or resumed
+	IM.PauseResumeExecution(key, action);
+
+	//Since we want the inputs to only work when the execution is not paused, we look to see if any of the figures are paused because that means that the entire execution is paused
+	if (!OBJECTS.GetPrimitives()[0]->GetPauseObject())
 	{
-		// Pause all objects
-		for (Primitive* primitve : OBJECTS.primitives)
-		{
-			primitve->PauseResumeObject();
-		}
-	}
-	else if (key == GLFW_KEY_M && action == GLFW_PRESS)
-	{
-		// Increment Velocities
-		OBJECTS.IncrementTransforms();
-	}
-	else if (key == GLFW_KEY_N && action == GLFW_PRESS)
-	{
-		// Decrase Velocities
-		OBJECTS.DecraseTransforms();
-	}
-	else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-	{
-		// Change between fill and line
-		for (Primitive* primitve : OBJECTS.primitives)
-		{
-			primitve->ChangeBetweenLineAndFill();
-		}
-	}
-	else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-	{
-		// Stop rendering cube
-		OBJECTS.primitives[0]->DisableActiveObject();
-	}
-	else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-	{
-		// Stop rendering ortoedron
-		OBJECTS.primitives[1]->DisableActiveObject();
-	}
-	else if (key == GLFW_KEY_4 && action == GLFW_PRESS)
-	{
-		// Stop rendering pyramid
-		OBJECTS.primitives[2]->DisableActiveObject();
+		//All the inputs reaction except the pause and resume input
+		IM.IncrementTransformsVelocities(key, action);
+		IM.DecreaseTransformsVelocities(key, action);
+		IM.ChangeBetweenLineAndFill(key, action);
+		IM.DisableActiveCube(key, action);
+		IM.DisableActiveOrhoedron(key, action);
+		IM.DisableActivePyramid(key, action);
 	}
 }
 
 void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 {
-	//Declarar vec2 para definir el offset
+	//Declare vec2 to define the offset
 	glm::vec2 offset = glm::vec2(0.f, 0.f);
 
-	//Compilar shaders
-	SHADER.SetVertexShader(SHADER.LoadVertexShader("MyFirstVertexShader.glsl"));
-	SHADER.SetGeometryShader(SHADER.LoadGeometryShader("MyFirstGeometryShader.glsl"));
-	SHADER.SetFragmentShader(SHADER.LoadFragmentShader("MyFirstFragmentShader.glsl"));
+	//Compile the first shaders
+	SHADER.SetVertexShader(SHADER.LoadShader("MyFirstVertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("MyFirstGeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetFragmentShader(SHADER.LoadShader("MyFirstFragmentShader.glsl", GL_FRAGMENT_SHADER));
 
-	//Compilar programa
+	//Compile the first program
 	SHADER.AddProgram();
 
-	SHADER.SetVertexShader(SHADER.LoadVertexShader("MyFirstVertexShader.glsl"));
-	SHADER.SetGeometryShader(SHADER.LoadGeometryShader("MyFirstGeometryShader.glsl"));
-	SHADER.SetFragmentShader(SHADER.LoadFragmentShader("PyramidFragmentShader.glsl"));
+	//Compile the second shaders
+	SHADER.SetVertexShader(SHADER.LoadShader("MyFirstVertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("MyFirstGeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetFragmentShader(SHADER.LoadShader("PyramidFragmentShader.glsl", GL_FRAGMENT_SHADER));
 
+	//Compile the second program
 	SHADER.AddProgram();
 
-	//Definimos color para limpiar el buffer de color
+	//Define color to clear the color buffer
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 
 	cube->InitVao();
 	orthoedron->InitVao();
 	pyramid->InitVao();
 
-	//Asignar valores iniciales al programa
+	//Assign initial values ​​to programs
 	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[1], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -126,54 +100,64 @@ void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 
 void main(){
 
-	//Definir semillas del rand segun el tiempo
+	//Define rand seeds according to time
 	srand(static_cast<unsigned int>(time(NULL)));
 
+	//Prepare the window to start working
 	GLFWwindow* window = InitProgram();
 
-	//Inicializamos GLEW y controlamos errores
+	//Initialize GLEW and control errors
 	if (glewInit() == GLEW_OK) {
 
+		//Create the 3 primitive
 		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		
+		//Set the 3 primitives in a vector of primitive
 		OBJECTS.Add(cube);
 		OBJECTS.Add(orthoedron);
 		OBJECTS.Add(pyramid);
 
+		//Prepare the shader, programs and set vao and vbo of the primitive
 		PreparePrimitive(cube, orthoedron, pyramid);
 
 		//Generamos el game loop
-		while (!glfwWindowShouldClose(window)) {
-			//Pulleamos los eventos (botones, teclas, mouse...)
+		while (!glfwWindowShouldClose(window)) 
+		{
+			//Pull the events (buttons, keys, mouse...)
 			glfwPollEvents();
 
 			glfwSetKeyCallback(window, KeyCallback);
 
-			//Limpiamos los buffers
+			//Clean the buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			
-			cube->Update(0);
-			orthoedron->Update(0);
-			pyramid->Update(1);
+			for (int i = 0; i < OBJECTS.GetPrimitives().size(); i++)
+			{
+				int index = 0;
+				if (i == 2)
+					index = 1;
 
-			//Cambiamos buffers
+				OBJECTS.GetPrimitives()[i]->Update(index);
+			}
+
+			//Change buffers
 			glFlush();
 			glfwSwapBuffers(window);
 		}
 
-		//Desactivar y eliminar programa
+		//Deactivate and delete programs
 		glUseProgram(0);
 		glDeleteProgram(SHADER.compiledPrograms[0]);
 		glDeleteProgram(SHADER.compiledPrograms[1]);
 
 	}else {
-		std::cout << "Ha petao." << std::endl;
+		std::cout << "It crushed" << std::endl;
 		glfwTerminate();
 	}
 
-	//Finalizamos GLFW
+	//Finish GLFW
 	glfwTerminate();
 
 }
