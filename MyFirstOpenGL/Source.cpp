@@ -4,6 +4,7 @@
 #include "Cube.h"
 #include "Orthoedron.h"
 #include "Pyramid.h"
+#include "ObjectHandler.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -43,6 +44,38 @@ GLFWwindow* InitProgram()
 	glCullFace(GL_BACK);
 
 	return window;
+}
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		// Pause the animations
+	}
+	else if (key == GLFW_KEY_M && action == GLFW_PRESS)
+	{
+		OBJECTS.IncrementTransforms();
+	}
+	else if (key == GLFW_KEY_N && action == GLFW_PRESS)
+	{
+		OBJECTS.DecraseTransforms();
+	}
+	else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		// Change between fill and line
+	}
+	else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		// Stop rendering cube
+	}
+	else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+	{
+		// Stop rendering ortoedron
+	}
+	else if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+	{
+		// Stop rendering pyramid
+	}
 }
 
 void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
@@ -91,6 +124,11 @@ void main(){
 		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
 		Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
+		
+		OBJECTS.Add(cube);
+		OBJECTS.Add(orthoedron);
+		OBJECTS.Add(pyramid);
+
 		PreparePrimitive(cube, orthoedron, pyramid);
 
 		//Generamos el game loop
@@ -98,6 +136,8 @@ void main(){
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
+
+			glfwSetKeyCallback(window, KeyCallback);
 
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

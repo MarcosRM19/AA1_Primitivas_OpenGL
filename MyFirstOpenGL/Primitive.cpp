@@ -58,6 +58,20 @@ void Primitive::InitVao()
 
 }
 
+void Primitive::IncrementTransforms()
+{
+	fVelocity += .1f;
+	fAngularVelocity += .1f;
+	fScaleVelocity += .1f;
+}
+
+void Primitive::DecraseTransforms()
+{
+	fVelocity -= .1f;
+	fAngularVelocity -= .1f;
+	fScaleVelocity -= .1f;
+}
+
 Transform* Primitive::GetTransform()
 {
 	return transform;
@@ -103,3 +117,19 @@ void Primitive::SetScaleMatrix(glm::mat4 matrix)
 {
 	scaleMatrix = matrix;
 }
+
+void Primitive::SetFVelocity(float fVelocity)
+{
+	this->fVelocity = fVelocity;
+}
+
+void Primitive::SetFAngulargVelocity(float fAngularVelocity)
+{
+	this->fAngularVelocity = fAngularVelocity;
+}
+
+void Primitive::SetFScaleVelocity(float fScaleVelocity)
+{
+	this->fScaleVelocity = fScaleVelocity;
+}
+

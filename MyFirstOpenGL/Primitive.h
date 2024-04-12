@@ -2,9 +2,10 @@
 
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-#include "ShaderProgram.h"
 
+#include "ShaderProgram.h"
 #include "Transform.h"
+
 #include <vector>
 
 #define WINDOW_WIDTH 640
@@ -48,6 +49,10 @@ public:
 
 	virtual void InitVao();
 
+	virtual void IncrementTransforms();
+	virtual void DecraseTransforms();
+
+
 	//Getters
 	Transform* GetTransform();
 
@@ -63,5 +68,8 @@ public:
 	void SetRotationMatrix(glm::mat4 matrix);
 	void SetScaleMatrix(glm::mat4 matrix);
 
+	void SetFVelocity(float fVelocity);
+	void SetFAngulargVelocity(float fAngularVelocity);
+	void SetFScaleVelocity(float fScaleVelocity);
 };
 
