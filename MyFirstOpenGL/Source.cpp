@@ -69,16 +69,16 @@ void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 	glm::vec2 offset = glm::vec2(0.f, 0.f);
 
 	//Compile the first shaders
-	SHADER.SetVertexShader(SHADER.LoadShader("MyFirstVertexShader.glsl", GL_VERTEX_SHADER));
-	SHADER.SetGeometryShader(SHADER.LoadShader("MyFirstGeometryShader.glsl", GL_GEOMETRY_SHADER));
-	SHADER.SetFragmentShader(SHADER.LoadShader("MyFirstFragmentShader.glsl", GL_FRAGMENT_SHADER));
+	SHADER.SetVertexShader(SHADER.LoadShader("VertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("GeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetFragmentShader(SHADER.LoadShader("FragmentShader.glsl", GL_FRAGMENT_SHADER));
 
 	//Compile the first program
 	SHADER.AddProgram();
 
 	//Compile the second shaders
-	SHADER.SetVertexShader(SHADER.LoadShader("MyFirstVertexShader.glsl", GL_VERTEX_SHADER));
-	SHADER.SetGeometryShader(SHADER.LoadShader("MyFirstGeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetVertexShader(SHADER.LoadShader("VertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("GeometryShader.glsl", GL_GEOMETRY_SHADER));
 	SHADER.SetFragmentShader(SHADER.LoadShader("PyramidFragmentShader.glsl", GL_FRAGMENT_SHADER));
 
 	//Compile the second program
@@ -98,6 +98,33 @@ void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
 	glShadeModel(GL_FLAT);
 }
 
+void CreatePrimitive()
+{
+	//Set the velocities, the calculation of 1000 / 16 comes from converting milliseconds to seconds shooting at a refresh rate of 60 frames per second (FPS)
+
+	//Set a object move a 1 unity per second
+	float translationSpeed = 1.0f / (1000.0f / 16.0f);
+
+	//Set a object rotate 90 grades per second
+	float rotationSpeed = 90.0f / (1000.0f / 16.0f);
+
+	//Set a object scale doubles in size every second
+	float sceleSpeed = 1.0f / (1000.0f / 16.0f);
+
+	//Create the 3 primitive
+	Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+	Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+	Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+
+	//Set the 3 primitives in a vector of primitive
+	OBJECTS.Add(cube);
+	OBJECTS.Add(orthoedron);
+	OBJECTS.Add(pyramid);
+
+	//Prepare the shader, programs and set vao and vbo of the primitive
+	PreparePrimitive(cube, orthoedron, pyramid);
+}
+
 void main(){
 
 	//Define rand seeds according to time
@@ -109,18 +136,8 @@ void main(){
 	//Initialize GLEW and control errors
 	if (glewInit() == GLEW_OK) {
 
-		//Create the 3 primitive
-		Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
-		Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
-		Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), 0.01f, -1.f, 0.01f);
-		
-		//Set the 3 primitives in a vector of primitive
-		OBJECTS.Add(cube);
-		OBJECTS.Add(orthoedron);
-		OBJECTS.Add(pyramid);
-
-		//Prepare the shader, programs and set vao and vbo of the primitive
-		PreparePrimitive(cube, orthoedron, pyramid);
+		//Create and init the 3 primitives
+		CreatePrimitive();
 
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(window)) 

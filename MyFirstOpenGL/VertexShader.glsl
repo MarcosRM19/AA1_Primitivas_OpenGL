@@ -1,10 +1,14 @@
 #version 440 core
 
-layout(location = 0) in vec3 inputVertex; 
+layout(location = 0) in vec3 posicion;
+
+uniform mat4 translationMatrix;
+uniform mat4 rotationMatrix;
+uniform mat4 scaleMatrix;
 
 void main() {
-	// Asignar el vértice sin modificar
-	gl_Position = vec4(inputVertex, 1.0);
+    
+    mat4 model = translationMatrix * rotationMatrix * scaleMatrix;
+
+    gl_Position = model * vec4(posicion, 1.0);
 }
-
-

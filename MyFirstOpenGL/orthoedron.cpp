@@ -5,20 +5,14 @@ void Orthoedron::Update(int programIndex)
 	//Call update of primitive and passing the index of the program we want to use in this primitive
 	Primitive::Update(programIndex);
 
-	//Save the current scale to modify it
-	glm::vec3 scale = GetTransform()->scale;
-
-	//modifying the scale, depending on whether the orthoedron has to be growing or not, the scale in Y will multiply or divide
-	if (isIncreasing)
-		scale.y /= (1 - GetFScaleVelocity());
-	else
-		scale.y *= (1 - GetFScaleVelocity());
-
 	//If the exuction is not pause we calculate the transformations of the orthoedron
 	if (!GetPauseObject())
 	{
-		//Set the scale taking account of the new scale
-		GetTransform()->scale = scale;
+		//modifying the scale, depending on whether the orthoedron has to be growing or not, the scale in Y will multiply or divide
+		if (isIncreasing)
+			GetTransform()->scale.y /= (1 - GetFScaleVelocity());
+		else
+			GetTransform()->scale.y *= (1 - GetFScaleVelocity());
 
 		//Set the rotation of the orthoedron changing the Z axis
 		GetTransform()->rotation = GetTransform()->rotation + glm::vec3(0.f, 0.f, 1.f) * GetFAngulargVelocity();

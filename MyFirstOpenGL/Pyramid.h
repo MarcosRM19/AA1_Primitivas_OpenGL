@@ -13,18 +13,18 @@ public:
         : Primitive(position, rotation, forward, scale, fVelocity, fAngularVelocity,
             {        
                 // Triangle Fan
-                +0.0f, +0.2f, +0.0f,
-                -0.2f, -0.2f, +0.2f,
-                +0.2f, -0.2f, +0.2f,
-                +0.2f, -0.2f, -0.2f,
-                -0.2f, -0.2f, -0.2f,
-                -0.2f, -0.2f, +0.2f,
+                +0.0f, +0.3f, +0.0f,
+                -0.2f, -0.3f, +0.2f,
+                +0.2f, -0.3f, +0.2f,
+                +0.2f, -0.3f, -0.2f,
+                -0.2f, -0.3f, -0.2f,
+                -0.2f, -0.3f, +0.2f,
                 
                 // Triangle Strip
-                +0.2f, -0.2f, +0.2f,
-                -0.2f, -0.2f, +0.2f,
-                +0.2f, -0.2f, -0.2f,
-                -0.2f, -0.2f, -0.2f
+                +0.2f, -0.3f, +0.2f,
+                -0.2f, -0.3f, +0.2f,
+                +0.2f, -0.3f, -0.2f,
+                -0.2f, -0.3f, -0.2f
             }, fScaleVelocity) {
     }
     void Update(int programIndex) override;
