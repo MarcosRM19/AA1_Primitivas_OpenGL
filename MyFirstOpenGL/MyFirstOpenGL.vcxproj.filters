@@ -42,15 +42,30 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Orthoedron.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Pyramid.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectHandler.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyFirstVertexShader.glsl">
+    <None Include="VertexShader.glsl">
       <Filter>Shaders\Vertex Shader</Filter>
     </None>
-    <None Include="MyFirstGeometryShader.glsl">
+    <None Include="GeometryShader.glsl">
       <Filter>Shaders\Geometry Shader</Filter>
     </None>
-    <None Include="MyFirstFragmentShader.glsl">
+    <None Include="FragmentShader.glsl">
+      <Filter>Shaders\Fragment Shader</Filter>
+    </None>
+    <None Include="PyramidFragmentShader.glsl">
       <Filter>Shaders\Fragment Shader</Filter>
     </None>
   </ItemGroup>
@@ -65,6 +80,18 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Orthoedron.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Pyramid.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectHandler.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

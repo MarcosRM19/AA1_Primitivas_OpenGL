@@ -1,172 +1,180 @@
 #include "ShaderProgram.h"
+#include "InputManager.h"
 #include "Windows.h"
 
 #include "Cube.h"
-
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-
-std::vector<GLuint> compiledPrograms;
+#include "Orthoedron.h"
+#include "Pyramid.h"
 
 void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
-
-	//Definir nuevo tamaño del viewport
+	
+	//Define new viewport size
 	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
-
-	glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
 }
 
 GLFWwindow* InitProgram()
 {
-	//Inicializamos GLFW para gestionar ventanas e inputs
+	//Initialize GLFW to manage windowsand inputs
 	glfwInit();
 
-	//Configuramos la ventana
+	//Windows configuration
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-	//Inicializamos la ventana
+	//Initialize the window
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Engine", NULL, NULL);
 
-	//Asignamos función de callback para cuando el frame buffer es modificado
+	//Assign a callback function for when the frame buffer is modified
 	glfwSetFramebufferSizeCallback(window, Resize_Window);
 
-	//Definimos espacio de trabajo
+	//Define workspace
 	glfwMakeContextCurrent(window);
 
-	//Permitimos a GLEW usar funcionalidades experimentales
+	//Allow GLEW to use experimental features
 	glewExperimental = GL_TRUE;
 
-	//Activamos cull face
+	//Activate cull face
 	glEnable(GL_CULL_FACE);
 
-	//Indicamos lado del culling
+	//Indicate culling side
 	glCullFace(GL_BACK);
 
+	//We return window because we need it to future command
 	return window;
+}
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	//Set if the execution is paused or resumed
+	IM.PauseResumeExecution(key, action);
+
+	//Since we want the inputs to only work when the execution is not paused, we look to see if any of the figures are paused because that means that the entire execution is paused
+	if (!OBJECTS.GetPrimitives()[0]->GetPauseObject())
+	{
+		//All the inputs reaction except the pause and resume input
+		IM.IncrementTransformsVelocities(key, action);
+		IM.DecreaseTransformsVelocities(key, action);
+		IM.ChangeBetweenLineAndFill(key, action);
+		IM.DisableActiveCube(key, action);
+		IM.DisableActiveOrhoedron(key, action);
+		IM.DisableActivePyramid(key, action);
+	}
+}
+
+void PreparePrimitive(Cube* cube, Orthoedron* orthoedron, Pyramid* pyramid)
+{
+	//Declare vec2 to define the offset
+	glm::vec2 offset = glm::vec2(0.f, 0.f);
+
+	//Compile the first shaders
+	SHADER.SetVertexShader(SHADER.LoadShader("VertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("GeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetFragmentShader(SHADER.LoadShader("FragmentShader.glsl", GL_FRAGMENT_SHADER));
+
+	//Compile the first program
+	SHADER.AddProgram();
+
+	//Compile the second shaders
+	SHADER.SetVertexShader(SHADER.LoadShader("VertexShader.glsl", GL_VERTEX_SHADER));
+	SHADER.SetGeometryShader(SHADER.LoadShader("GeometryShader.glsl", GL_GEOMETRY_SHADER));
+	SHADER.SetFragmentShader(SHADER.LoadShader("PyramidFragmentShader.glsl", GL_FRAGMENT_SHADER));
+
+	//Compile the second program
+	SHADER.AddProgram();
+
+	//Define color to clear the color buffer
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+
+	cube->InitVao();
+	orthoedron->InitVao();
+	pyramid->InitVao();
+
+	//Assign initial values â€‹â€‹to programs
+	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+	glUniform2f(glGetUniformLocation(SHADER.compiledPrograms[1], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	glShadeModel(GL_FLAT);
+}
+
+void CreatePrimitive()
+{
+	//Set the velocities, the calculation of 1000 / 16 comes from converting milliseconds to seconds shooting at a refresh rate of 60 frames per second (FPS)
+
+	//Set a object move a 1 unity per second
+	float translationSpeed = 1.0f / (1000.0f / 16.0f);
+
+	//Set a object rotate 90 grades per second
+	float rotationSpeed = 90.0f / (1000.0f / 16.0f);
+
+	//Set a object scale doubles in size every second
+	float sceleSpeed = 1.0f / (1000.0f / 16.0f);
+
+	//Create the 3 primitive
+	Cube* cube = new Cube(glm::vec3(-0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+	Orthoedron* orthoedron = new Orthoedron(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+	Pyramid* pyramid = new Pyramid(glm::vec3(0.6f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f), translationSpeed, rotationSpeed, sceleSpeed);
+
+	//Set the 3 primitives in a vector of primitive
+	OBJECTS.Add(cube);
+	OBJECTS.Add(orthoedron);
+	OBJECTS.Add(pyramid);
+
+	//Prepare the shader, programs and set vao and vbo of the primitive
+	PreparePrimitive(cube, orthoedron, pyramid);
 }
 
 void main(){
 
-	//Definir semillas del rand según el tiempo
+	//Define rand seeds according to time
 	srand(static_cast<unsigned int>(time(NULL)));
 
+	//Prepare the window to start working
 	GLFWwindow* window = InitProgram();
 
-	//Inicializamos GLEW y controlamos errores
+	//Initialize GLEW and control errors
 	if (glewInit() == GLEW_OK) {
 
-		//Declarar intancia de gameobject
-		Cube* cube = new Cube(glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f), 0.01f, -1.f);
-
-		//Declarar vec2 para definir el offset
-		glm::vec2 offset = glm::vec2(0.f, 0.f);
-
-		//Compilar shaders
-		ShaderProgram shaderProgram;
-		shaderProgram.SetVertexShader(shaderProgram.LoadVertexShader("MyFirstVertexShader.glsl"));
-		shaderProgram.SetGeometryShader(shaderProgram.LoadGeometryShader("MyFirstGeometryShader.glsl"));
-		shaderProgram.SetFragmentShader(shaderProgram.LoadFragmentShader("MyFirstFragmentShader.glsl"));
-
-		//Compilar programa
-		compiledPrograms.push_back(shaderProgram.CreateProgram(shaderProgram));
-
-		//Definimos color para limpiar el buffer de color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
-
-		GLuint vaoPuntos, vboPuntos;
-
-		//Definimos cantidad de vao a crear y donde almacenarlos 
-		glGenVertexArrays(1, &vaoPuntos);
-
-		//Indico que el VAO activo de la GPU es el que acabo de crear
-		glBindVertexArray(vaoPuntos);
-
-		//Definimos cantidad de vbo a crear y donde almacenarlos
-		glGenBuffers(1, &vboPuntos);
-
-		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
-		glBindBuffer(GL_ARRAY_BUFFER, vboPuntos);		
-
-		//Definimos modo de dibujo para cada cara si cambiamos el LINE por FILL 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		//Ponemos los valores en el VBO creado
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * cube->GetPoint().size(), cube->GetPointData(), GL_STATIC_DRAW);
-
-		//Indicamos donde almacenar y como esta distribuida la información
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-
-		//Indicamos que la tarjeta gráfica puede usar el atributo 0
-		glEnableVertexAttribArray(0);
-
-		//Desvinculamos VBO
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//Desvinculamos VAO
-		glBindVertexArray(0);
-
-		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(compiledPrograms[0]);
-
-		//glm::mat4 rotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), 40.f);
-
-		//Asignar valores iniciales al programa
-		glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
-		//glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		//Create and init the 3 primitives
+		CreatePrimitive();
 
 		//Generamos el game loop
-		while (!glfwWindowShouldClose(window)) {
-
-			//Pulleamos los eventos (botones, teclas, mouse...)
+		while (!glfwWindowShouldClose(window)) 
+		{
+			//Pull the events (buttons, keys, mouse...)
 			glfwPollEvents();
 
-			//Limpiamos los buffers
+			glfwSetKeyCallback(window, KeyCallback);
+
+			//Clean the buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-			//Definimos que queremos usar el VAO con los puntos
-			glBindVertexArray(vaoPuntos);
-
-			glm::mat4 cubeModelMatrix = glm::mat4(1.0f);
 			
-			cube->GetTransform()->SetPosition(cube->GetTransform()->GetPosition() + cube->GetTransform()->GetForward() * cube->GetFVelocity());
-			cube->GetTransform()->SetRotation(cube->GetTransform()->GetRotation() + glm::vec3(0.f, 1.f, 0.f) * cube->GetFAngulargVelocity());
-
-			if (cube->GetTransform()->GetPosition().y >= 0.5f || cube->GetTransform()->GetPosition().y <= -0.5f)
+			for (int i = 0; i < OBJECTS.GetPrimitives().size(); i++)
 			{
-				cube->GetTransform()->SetForward(cube->GetTransform()->GetForward() * -1.f);
+				int index = 0;
+				if (i == 2)
+					index = 1;
+
+				OBJECTS.GetPrimitives()[i]->Update(index);
 			}
 
-			glm::mat4 cubeTranslaionMatrix = cube->GenerateTranslationMatrix(cube->GetTransform()->GetPosition());
-			glm::mat4 cubeRotationMatrix = cube->GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube->GetTransform()->GetRotation().y);
-
-			cubeModelMatrix = cubeTranslaionMatrix * cubeRotationMatrix * cubeModelMatrix;
-			
-			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "transform"), 1, GL_FALSE, glm::value_ptr(cubeModelMatrix));
-
-			//Definimos que queremos dibujar
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
-			
-			//Dejamos de usar el VAO indicado anteriormente
-			glBindVertexArray(0);
-
-			//Cambiamos buffers
+			//Change buffers
 			glFlush();
 			glfwSwapBuffers(window);
 		}
 
-		//Desactivar y eliminar programa
+		//Deactivate and delete programs
 		glUseProgram(0);
-		glDeleteProgram(compiledPrograms[0]);
+		glDeleteProgram(SHADER.compiledPrograms[0]);
+		glDeleteProgram(SHADER.compiledPrograms[1]);
 
 	}else {
-		std::cout << "Ha petao." << std::endl;
+		std::cout << "It crushed" << std::endl;
 		glfwTerminate();
 	}
 
-	//Finalizamos GLFW
+	//Finish GLFW
 	glfwTerminate();
 
 }

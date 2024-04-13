@@ -20,19 +20,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="ObjectHandler.cpp" />
+    <ClCompile Include="Orthoedron.cpp" />
     <ClCompile Include="Primitive.cpp" />
+    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyFirstFragmentShader.glsl" />
-    <None Include="MyFirstGeometryShader.glsl" />
-    <None Include="MyFirstVertexShader.glsl" />
+    <None Include="FragmentShader.glsl" />
+    <None Include="GeometryShader.glsl" />
+    <None Include="VertexShader.glsl" />
+    <None Include="PyramidFragmentShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ObjectHandler.h" />
+    <ClInclude Include="Orthoedron.h" />
     <ClInclude Include="Primitive.h" />
+    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
