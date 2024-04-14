@@ -1,15 +1,21 @@
 #pragma once
-#include "ObjectHandler.h"
+#include "WindowManager.h"
 
 #define IM InputManager::Instance()
 
 class InputManager
 {
 private:
-	InputManager() = default;
+	bool pause;
+
+	InputManager()
+	{
+		pause = false;
+	}
 
 	InputManager(const InputManager&) = delete;
 	InputManager& operator = (const InputManager&) = delete;
+
 
 public:
 	inline static InputManager& Instance()
@@ -18,6 +24,8 @@ public:
 		return manager;
 	}
 
+	void Update();
+
 	void PauseResumeExecution(int key, int action);
 	void IncrementTransformsVelocities(int key, int action);
 	void DecreaseTransformsVelocities(int key, int action);
@@ -25,5 +33,7 @@ public:
 	void DisableActiveCube(int key, int action);
 	void DisableActiveOrhoedron(int key, int action);
 	void DisableActivePyramid(int key, int action);
+
+	bool GetPause();
 };
 
