@@ -15,11 +15,11 @@ void main() {
         } 
         else if (t < 4.0) 
         {
-            color = vec3(0.0, 0.0, 1.0);
+            color = vec3(0.0, 1.0, 0.0);
         } 
         else 
         {
-            color = vec3(0.0, 1.0, 0.0);
+            color = vec3(0.0, 0.0, 1.0);
         }
 
         fragColor = vec4(color, 1.0);
