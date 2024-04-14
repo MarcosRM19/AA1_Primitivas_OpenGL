@@ -124,6 +124,11 @@ GLuint ShaderProgram::CreateProgram(const ShaderProgram& shaders)
 	}
 }
 
+void ShaderProgram::AddProgram()
+{
+	compiledPrograms.push_back(SHADER.CreateProgram(SHADER));
+}
+
 void ShaderProgram::SetVertexShader(GLuint vertexShader)
 {
 	this->vertexShader = vertexShader;

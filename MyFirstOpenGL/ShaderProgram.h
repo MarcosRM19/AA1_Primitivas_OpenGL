@@ -1,5 +1,4 @@
 #pragma once
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -17,10 +16,7 @@ private:
 	GLuint geometryShader = 0;
 	GLuint fragmentShader = 0;
 
-	ShaderProgram()
-	{
-
-	}
+	ShaderProgram() = default;
 
 	ShaderProgram(const ShaderProgram&) = delete;
 	ShaderProgram& operator =(const ShaderProgram&) = delete;
@@ -40,10 +36,7 @@ public:
 
 	GLuint CreateProgram(const ShaderProgram& shaders);
 
-	void AddProgram()
-	{
-		compiledPrograms.push_back(SHADER.CreateProgram(SHADER));
-	}
+	void AddProgram();
 
 	// SETTER
 	void SetVertexShader(GLuint vertexShader);

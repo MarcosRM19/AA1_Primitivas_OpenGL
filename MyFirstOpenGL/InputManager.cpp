@@ -1,5 +1,31 @@
 #include "InputManager.h"
 
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	//Set if the execution is paused or resumed
+	IM.PauseResumeExecution(key, action);
+
+	//See if any of the the execution is paused
+	if (!IM.GetPause())
+	{
+		//All the inputs reaction except the pause and resume input
+		IM.IncrementTransformsVelocities(key, action);
+		IM.DecreaseTransformsVelocities(key, action);
+		IM.ChangeBetweenLineAndFill(key, action);
+		IM.DisableActiveCube(key, action);
+		IM.DisableActiveOrhoedron(key, action);
+		IM.DisableActivePyramid(key, action);
+	}
+}
+
+void InputManager::Update()
+{
+	//Pull the events (buttons, keys, mouse...)
+	glfwPollEvents();
+
+	glfwSetKeyCallback(WM.GetWindows(), KeyCallback);
+}
+
 void InputManager::PauseResumeExecution(int key, int action)
 {
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
@@ -9,6 +35,7 @@ void InputManager::PauseResumeExecution(int key, int action)
 		{
 			primitve->PauseResumeObject();
 		}
+		pause = !pause;
 	}
 }
 
@@ -67,4 +94,9 @@ void InputManager::DisableActivePyramid(int key, int action)
 		// Stop rendering pyramid
 		OBJECTS.GetPrimitives()[2]->DisableActiveObject();
 	}
+}
+
+bool InputManager::GetPause()
+{
+	return pause;
 }
